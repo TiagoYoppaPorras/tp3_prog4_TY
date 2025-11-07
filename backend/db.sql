@@ -1,29 +1,32 @@
 CREATE TABLE `usuarios` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(25) NOT NULL,
-  `email` varchar(40) NOT NULL,
+  `nombre` varchar(20) NOT NULL,
+  `email` varchar(50) NOT NULL,
   `hash_contraseña` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE `pacientes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(40) NOT NULL,
-  `apellido` varchar(40) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `apellido` varchar(50) NOT NULL,
   `dni` int NOT NULL,
   `fecha_nacimiento` date NOT NULL,
-  `obra_social` varchar(60) NOT NULL,
+  `obra_social` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
 CREATE TABLE `medicos` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(40) NOT NULL,
-  `apellido` varchar(40) NOT NULL,
-  `especialidad` varchar(40) NOT NULL,
-  `matricula_profesional` int NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `apellido` varchar(50) NOT NULL,
+  `especialidad` varchar(50) NOT NULL,
+  `matricula_profesional` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE `turnos` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -31,8 +34,8 @@ CREATE TABLE `turnos` (
   `medico_id` int NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
-  `estado` varchar(40) NOT NULL,
-  `observaciones` varchar(150) NOT NULL,
+  `estado` varchar(50) NOT NULL,
+  `observaciones` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_turnos_paciente_id_idx` (`paciente_id`),
   KEY `fk_turnos_medico_id_idx` (`medico_id`),

@@ -1,0 +1,20 @@
+@url=http://localhost:3000
+
+### Consultar usuarios
+GET {{url}}/usuarios
+
+### Consultar por un usuario
+GET {{url}}/usuarios/22
+
+### Crear usuario
+POST {{url}}/usuarios
+Content-Type: application/json
+
+{
+    "nombre":"tiagoElMasCrackkk",
+    "email": "lukaku87@gmail.com",
+    "password": "123456"
+}
+
+### Quitar rol a usuario
+DELETE {{url}}/usuarios/20
