@@ -1,0 +1,22 @@
+@url=http://localhost:3000
+
+### Listar todos
+GET {{url}}/pacientes
+
+### Buscar por ID
+GET {{url}}/pacientes/1
+
+### Crear paciente
+POST {{url}}/pacientes
+Content-Type: application/json
+
+{
+  "nombre": "joseeeee",
+  "apellido": "Gómez",
+  "dni": "44322111",
+  "fecha_nacimiento": "1999-05-14",
+  "obra_social": "OSDE"
+}
+
+### Eliminar paciente
+DELETE {{url}}/pacientes/1

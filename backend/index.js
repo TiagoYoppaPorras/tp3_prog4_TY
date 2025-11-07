@@ -1,4 +1,5 @@
 import express from 'express'
+import pacientesRouter from "./pacientes.js";
 import { conectarDB } from './db.js'
 
 conectarDB()
@@ -11,6 +12,9 @@ app.get('/', (req, res) => {
 })
 
 app.use(express.json())
+
+app.use("/pacientes", pacientesRouter);
+
 
 app.listen(port ,() => {
     console.log(`Aplicación funcionando en http://localhost:${port}`);
