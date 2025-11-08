@@ -1,0 +1,32 @@
+@url=http://localhost:3000
+
+### Listar todos los turnos
+GET {{url}}/turnos
+
+### Buscar turno por ID
+GET {{url}}/turnos/1
+
+### Crear un turno
+POST {{url}}/turnos
+Content-Type: application/json
+
+{
+  "paciente_id": 2,
+  "medico_id": 12,
+  "fecha": "2025-11-10",
+  "hora": "10:30",
+  "estado": "pendiente",
+  "observaciones": "Primera consulta de kinesiología"
+}
+
+### Actualizar estado de un turno
+PUT {{url}}/turnos/2
+Content-Type: application/json
+
+{
+  "estado": "atendido",
+  "observaciones": "Paciente atendido sin complicaciones"
+}
+
+### Eliminar turno
+DELETE {{url}}/turnos/2

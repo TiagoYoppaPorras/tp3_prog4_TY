@@ -11,10 +11,10 @@ POST {{url}}/pacientes
 Content-Type: application/json
 
 {
-  "nombre": "joseeeee",
-  "apellido": "Gómez",
-  "dni": "44322111",
-  "fecha_nacimiento": "1999-05-14",
+  "nombre": "tiago",
+  "apellido": "yoppa",
+  "dni": "45470185",
+  "fecha_nacimiento": "2004-01-14",
   "obra_social": "OSDE"
 }
 
