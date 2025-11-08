@@ -1,0 +1,21 @@
+@url=http://localhost:3000
+
+### Listar todos los médicos
+GET {{url}}/medicos
+
+### Buscar médico por ID
+GET {{url}}/medicos/11
+
+### Crear médico
+POST {{url}}/medicos
+Content-Type: application/json
+
+{
+  "nombre": "tiaguito",
+  "apellido": "yoppa",
+  "especialidad": "Kinesiología",
+  "matricula_profesional": "fue123_"
+}
+
+### Eliminar médico
+DELETE {{url}}/medicos/10
