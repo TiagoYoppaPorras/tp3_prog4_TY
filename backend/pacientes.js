@@ -55,6 +55,36 @@ router.post(
   }
 );
 
+router.put(
+  "/:id",
+  validarId,
+  verificarValidaciones,
+  async (req, res) => {
+    const id = Number(req.params.id);
+    const { nombre, apellido, dni, fecha_nacimiento, obra_social } = req.body;
+
+    // Verificar que el paciente existe
+    const [pacientes] = await db.execute("SELECT id FROM pacientes WHERE id=?", [id]);
+    if (pacientes.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Paciente no encontrado" 
+      });
+    }
+
+    await db.execute(
+      "UPDATE pacientes SET nombre=?, apellido=?, dni=?, fecha_nacimiento=?, obra_social=? WHERE id=?",
+      [nombre, apellido, dni, fecha_nacimiento, obra_social, id]
+    );
+
+    res.json({ 
+      success: true, 
+      message: "Paciente actualizado correctamente",
+      data: { id, nombre, apellido, dni, fecha_nacimiento, obra_social }
+    });
+  }
+);
+
 // Eliminar paciente
 router.delete(
   "/:id",

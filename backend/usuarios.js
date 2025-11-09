@@ -55,6 +55,38 @@ router.post(
   }
 );
 
+router.put(
+  "/:id",
+  validarId,
+  verificarValidaciones,
+  async (req, res) => {
+    const id = Number(req.params.id);
+    const { nombre, email } = req.body;
+
+    const [usuarios] = await db.execute("SELECT id FROM usuarios WHERE id=?", [
+      id,
+    ]);
+    if (usuarios.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado",
+      });
+    }
+
+    await db.execute("UPDATE usuarios SET nombre=?, email=? WHERE id=?", [
+      nombre,
+      email,
+      id,
+    ]);
+
+    res.json({
+      success: true,
+      message: "Usuario actualizado correctamente",
+      data: { id, nombre, email },
+    });
+  }
+);
+
 router.delete(
   "/:id",
   validarId,

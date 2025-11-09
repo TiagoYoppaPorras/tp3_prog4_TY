@@ -58,6 +58,36 @@ router.post(
   }
 );
 
+router.put(
+  "/:id",
+  validarId,
+  verificarValidaciones,
+  async (req, res) => {
+    const id = Number(req.params.id);
+    const { nombre, apellido, especialidad, matricula_profesional } = req.body;
+
+    // Verificar que el médico existe
+    const [medicos] = await db.execute("SELECT id FROM medicos WHERE id=?", [id]);
+    if (medicos.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Médico no encontrado" 
+      });
+    }
+
+    await db.execute(
+      "UPDATE medicos SET nombre=?, apellido=?, especialidad=?, matricula_profesional=? WHERE id=?",
+      [nombre, apellido, especialidad, matricula_profesional, id]
+    );
+
+    res.json({ 
+      success: true, 
+      message: "Médico actualizado correctamente",
+      data: { id, nombre, apellido, especialidad, matricula_profesional }
+    });
+  }
+);
+
 router.delete(
   "/:id",
   validarId,
