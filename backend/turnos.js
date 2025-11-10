@@ -1,11 +1,12 @@
 import express from "express";
 import { db } from "./db.js";
 import { validarId, verificarValidaciones } from "./validaciones.js";
+import { body } from "express-validator";
+import { verificarAutenticacion } from "./auth.js";
 
 const router = express.Router();
 
-// Obtener todos los turnos
-router.get("/", async (req, res) => {
+router.get("/", verificarAutenticacion, async (req, res) => {
   const [rows] = await db.execute(`
     SELECT 
       t.id,
@@ -22,18 +23,19 @@ router.get("/", async (req, res) => {
 
   res.json({
     success: true,
-    turnos: rows
+    turnos: rows,
   });
 });
 
-// Obtener un turno por ID
 router.get(
   "/:id",
+  verificarAutenticacion,
   validarId,
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
-    const [rows] = await db.execute(`
+    const [rows] = await db.execute(
+      `
       SELECT 
         t.id,
         p.nombre AS paciente_nombre,
@@ -46,7 +48,9 @@ router.get(
       JOIN pacientes p ON t.paciente_id = p.id
       JOIN medicos m ON t.medico_id = m.id
       WHERE t.id = ?
-    `, [id]);
+    `,
+      [id]
+    );
 
     if (rows.length === 0) {
       return res
@@ -58,12 +62,32 @@ router.get(
   }
 );
 
-// Crear un nuevo turno
 router.post(
   "/",
+  verificarAutenticacion,
+  body("paciente_id", "ID de paciente inválido")
+    .isInt({ min: 1 })
+    .withMessage("El ID del paciente debe ser un número entero positivo"),
+  body("medico_id", "ID de médico inválido")
+    .isInt({ min: 1 })
+    .withMessage("El ID del médico debe ser un número entero positivo"),
+  body("fecha", "Fecha inválida")
+    .isDate()
+    .withMessage("Debe ser una fecha válida en formato YYYY-MM-DD"),
+  body("hora", "Hora inválida")
+    .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .withMessage("La hora debe estar en formato HH:MM (24 horas)"),
+  body("estado", "Estado inválido")
+    .isIn(["pendiente", "atendido", "cancelado"])
+    .withMessage("El estado debe ser: pendiente, atendido o cancelado"),
+  body("observaciones", "Observaciones inválidas")
+    .optional()
+    .isLength({ max: 500 })
+    .withMessage("Las observaciones no pueden tener más de 500 caracteres"),
   verificarValidaciones,
   async (req, res) => {
-    const { paciente_id, medico_id, fecha, hora, estado, observaciones } = req.body;
+    const { paciente_id, medico_id, fecha, hora, estado, observaciones } =
+      req.body;
 
     const [result] = await db.execute(
       "INSERT INTO turnos (paciente_id, medico_id, fecha, hora, estado, observaciones) VALUES (?,?,?,?,?,?)",
@@ -72,32 +96,48 @@ router.post(
 
     res.status(201).json({
       success: true,
-      data: { id: result.insertId, paciente_id, medico_id, fecha, hora, estado, observaciones }
+      data: {
+        id: result.insertId,
+        paciente_id,
+        medico_id,
+        fecha,
+        hora,
+        estado,
+        observaciones,
+      },
     });
   }
 );
 
-// Actualizar estado u observaciones de un turno
 router.put(
   "/:id",
+  verificarAutenticacion,
   validarId,
+  body("estado", "Estado inválido")
+    .isIn(["pendiente", "atendido", "cancelado"])
+    .withMessage("El estado debe ser: pendiente, atendido o cancelado"),
+  body("observaciones", "Observaciones inválidas")
+    .optional()
+    .isLength({ max: 500 })
+    .withMessage("Las observaciones no pueden tener más de 500 caracteres"),
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
     const { estado, observaciones } = req.body;
 
-    await db.execute(
-      "UPDATE turnos SET estado=?, observaciones=? WHERE id=?",
-      [estado, observaciones, id]
-    );
+    await db.execute("UPDATE turnos SET estado=?, observaciones=? WHERE id=?", [
+      estado,
+      observaciones,
+      id,
+    ]);
 
     res.json({ success: true, message: "Turno actualizado correctamente" });
   }
 );
 
-// Eliminar un turno
 router.delete(
   "/:id",
+  verificarAutenticacion,
   validarId,
   verificarValidaciones,
   async (req, res) => {

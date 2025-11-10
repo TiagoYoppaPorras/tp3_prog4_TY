@@ -1,26 +1,29 @@
 import express from "express";
 import { db } from "./db.js";
 import { validarId, verificarValidaciones } from "./validaciones.js";
+import { body } from "express-validator";
+import { verificarAutenticacion } from "./auth.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", verificarAutenticacion, async (req, res) => {
   const [rows] = await db.execute("SELECT * FROM medicos");
 
   res.json({
     success: true,
-    medicos: rows
+    medicos: rows,
   });
 });
 
 router.get(
   "/:id",
+  verificarAutenticacion,
   validarId,
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
     const [rows] = await db.execute(
-      "SELECT nombre, apellido, especialidad, matricula_profesional FROM medicos WHERE id=?",
+      "SELECT id, nombre, apellido, especialidad, matricula_profesional FROM medicos WHERE id=?",
       [id]
     );
 
@@ -36,6 +39,25 @@ router.get(
 
 router.post(
   "/",
+  verificarAutenticacion,
+  body("nombre", "Nombre inválido")
+    .isAlpha("es-ES", { ignore: " " })
+    .withMessage("El nombre solo puede contener letras")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El nombre debe tener entre 1 y 50 caracteres"),
+  body("apellido", "Apellido inválido")
+    .isAlpha("es-ES", { ignore: " " })
+    .withMessage("El apellido solo puede contener letras")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El apellido debe tener entre 1 y 50 caracteres"),
+  body("especialidad", "Especialidad inválida")
+    .isLength({ min: 1, max: 100 })
+    .withMessage("La especialidad debe tener entre 1 y 100 caracteres"),
+  body("matricula_profesional", "Matrícula profesional inválida")
+    .isAlphanumeric("es-ES")
+    .withMessage("La matrícula solo puede contener letras y números")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("La matrícula debe tener entre 1 y 50 caracteres"),
   verificarValidaciones,
   async (req, res) => {
     const { nombre, apellido, especialidad, matricula_profesional } = req.body;
@@ -47,20 +69,39 @@ router.post(
 
     res.status(201).json({
       success: true,
-      data: { 
-        id: result.insertId, 
-        nombre, 
-        apellido, 
-        especialidad, 
-        matricula_profesional 
-      }
+      data: {
+        id: result.insertId,
+        nombre,
+        apellido,
+        especialidad,
+        matricula_profesional,
+      },
     });
   }
 );
 
 router.put(
   "/:id",
+  verificarAutenticacion,
   validarId,
+  body("nombre", "Nombre inválido")
+    .isAlpha("es-ES", { ignore: " " })
+    .withMessage("El nombre solo puede contener letras")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El nombre debe tener entre 1 y 50 caracteres"),
+  body("apellido", "Apellido inválido")
+    .isAlpha("es-ES", { ignore: " " })
+    .withMessage("El apellido solo puede contener letras")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El apellido debe tener entre 1 y 50 caracteres"),
+  body("especialidad", "Especialidad inválida")
+    .isLength({ min: 1, max: 100 })
+    .withMessage("La especialidad debe tener entre 1 y 100 caracteres"),
+  body("matricula_profesional", "Matrícula profesional inválida")
+    .isAlphanumeric("es-ES")
+    .withMessage("La matrícula solo puede contener letras y números")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("La matrícula debe tener entre 1 y 50 caracteres"),
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
@@ -90,6 +131,7 @@ router.put(
 
 router.delete(
   "/:id",
+  verificarAutenticacion,
   validarId,
   verificarValidaciones,
   async (req, res) => {

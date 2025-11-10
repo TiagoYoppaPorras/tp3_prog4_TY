@@ -1,10 +1,13 @@
 import express from "express";
 import { db } from "./db.js";
 import { validarId, verificarValidaciones } from "./validaciones.js";
+import { body } from "express-validator";
+import bcrypt from "bcrypt";
+import { verificarAutenticacion } from "./auth.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", verificarAutenticacion, async (req, res) => {
   const [rows] = await db.execute("SELECT * FROM usuarios");
   // RECORDAR Quitar la contraseña en la api
   res.json({
@@ -15,14 +18,13 @@ router.get("/", async (req, res) => {
 
 router.get(
   "/:id",
+  verificarAutenticacion,
   validarId,
   verificarValidaciones,
-  //Aqui no se autentica
-  //verificarAutenticacion,
   async (req, res) => {
     const id = Number(req.params.id);
     const [rows] = await db.execute(
-      "SELECT nombre, email FROM usuarios WHERE id=?",
+      "SELECT id, nombre, email FROM usuarios WHERE id=?",
       [id]
     );
 
@@ -38,14 +40,32 @@ router.get(
 
 router.post(
   "/",
+  body("nombre", "Nombre inválido")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El nombre debe tener entre 1 y 50 caracteres")
+    .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
+    .withMessage("El nombre solo puede contener letras y espacios"),
+  body("email", "Email inválido")
+    .isEmail()
+    .withMessage("Debe ser un email válido")
+    .isLength({ max: 100 })
+    .withMessage("El email no puede tener más de 100 caracteres"),
+  body("password", "Contraseña inválida").isStrongPassword({
+    minLength: 8, // Minimo de 8 caracteres
+    minLowercase: 1, // Al menos una letra en minusculas
+    minUppercase: 1, // Letras mayusculas opcionales
+    minNumbers: 1, // Al menos un número
+    minSymbols: 1, // Símbolos opcionales
+  }),
   verificarValidaciones,
   async (req, res) => {
     const { nombre, email, password } = req.body;
 
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const [result] = await db.execute(
       "INSERT INTO usuarios (nombre, email, hash_contraseña) VALUES (?,?,?)",
-      [nombre, email, password]
+      [nombre, email, hashedPassword]
     );
 
     res.status(201).json({
@@ -57,7 +77,18 @@ router.post(
 
 router.put(
   "/:id",
+  verificarAutenticacion,
   validarId,
+  body("nombre", "Nombre inválido")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El nombre debe tener entre 1 y 50 caracteres")
+    .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
+    .withMessage("El nombre solo puede contener letras y espacios"),
+  body("email", "Email inválido")
+    .isEmail()
+    .withMessage("Debe ser un email válido")
+    .isLength({ max: 100 })
+    .withMessage("El email no puede tener más de 100 caracteres"),
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
@@ -89,6 +120,7 @@ router.put(
 
 router.delete(
   "/:id",
+  verificarAutenticacion,
   validarId,
   verificarValidaciones,
   async (req, res) => {
@@ -98,6 +130,5 @@ router.delete(
     res.json({ success: true, data: id });
   }
 );
-
 
 export default router;

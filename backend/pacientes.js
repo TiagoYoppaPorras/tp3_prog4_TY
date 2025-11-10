@@ -1,28 +1,29 @@
 import express from "express";
 import { db } from "./db.js";
 import { validarId, verificarValidaciones } from "./validaciones.js";
+import { body } from "express-validator";
+import { verificarAutenticacion } from "./auth.js";
 
 const router = express.Router();
 
-// Obtener todos los pacientes
-router.get("/", async (req, res) => {
+router.get("/", verificarAutenticacion, async (req, res) => {
   const [rows] = await db.execute("SELECT * FROM pacientes");
 
   res.json({
     success: true,
-    pacientes: rows
+    pacientes: rows,
   });
 });
 
-// Obtener un paciente por ID
 router.get(
   "/:id",
+  verificarAutenticacion,
   validarId,
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
     const [rows] = await db.execute(
-      "SELECT nombre, apellido, dni, fecha_nacimiento, obra_social FROM pacientes WHERE id=?",
+      "SELECT id, nombre, apellido, dni, fecha_nacimiento, obra_social FROM pacientes WHERE id=?",
       [id]
     );
 
@@ -36,9 +37,28 @@ router.get(
   }
 );
 
-// Crear paciente
 router.post(
   "/",
+  verificarAutenticacion,
+  body("nombre", "Nombre inválido")
+    .isAlpha("es-ES", { ignore: " " })
+    .withMessage("El nombre solo puede contener letras")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El nombre debe tener entre 1 y 50 caracteres"),
+  body("apellido", "Apellido inválido")
+    .isAlpha("es-ES", { ignore: " " })
+    .withMessage("El apellido solo puede contener letras")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El apellido debe tener entre 1 y 50 caracteres"),
+  body("dni", "DNI inválido")
+    .isInt({ min: 1000000, max: 99999999 })
+    .withMessage("El DNI debe ser un número entre 1.000.000 y 99.999.999"),
+  body("fecha_nacimiento", "Fecha de nacimiento inválida")
+    .isDate()
+    .withMessage("Debe ser una fecha válida"),
+  body("obra_social", "Obra social inválida")
+    .isLength({ max: 100 })
+    .withMessage("La obra social no puede tener más de 100 caracteres"),
   verificarValidaciones,
   async (req, res) => {
     const { nombre, apellido, dni, fecha_nacimiento, obra_social } = req.body;
@@ -50,14 +70,41 @@ router.post(
 
     res.status(201).json({
       success: true,
-      data: { id: result.insertId, nombre, apellido, dni }
+      data: {
+        id: result.insertId,
+        nombre,
+        apellido,
+        dni,
+        fecha_nacimiento,
+        obra_social,
+      },
     });
   }
 );
 
 router.put(
   "/:id",
+  verificarAutenticacion,
   validarId,
+  body("nombre", "Nombre inválido")
+    .isAlpha("es-ES", { ignore: " " })
+    .withMessage("El nombre solo puede contener letras")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El nombre debe tener entre 1 y 50 caracteres"),
+  body("apellido", "Apellido inválido")
+    .isAlpha("es-ES", { ignore: " " })
+    .withMessage("El apellido solo puede contener letras")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("El apellido debe tener entre 1 y 50 caracteres"),
+  body("dni", "DNI inválido")
+    .isInt({ min: 1000000, max: 99999999 })
+    .withMessage("El DNI debe ser un número entre 1.000.000 y 99.999.999"),
+  body("fecha_nacimiento", "Fecha de nacimiento inválida")
+    .isDate()
+    .withMessage("Debe ser una fecha válida"),
+  body("obra_social", "Obra social inválida")
+    .isLength({ max: 100 })
+    .withMessage("La obra social no puede tener más de 100 caracteres"),
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
@@ -85,9 +132,9 @@ router.put(
   }
 );
 
-// Eliminar paciente
 router.delete(
   "/:id",
+  verificarAutenticacion,
   validarId,
   verificarValidaciones,
   async (req, res) => {
