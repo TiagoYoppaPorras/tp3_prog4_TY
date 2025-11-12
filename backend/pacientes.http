@@ -1,6 +1,46 @@
 @url=http://localhost:3000
 
-### Listar todos
+### Listar todos (cambiar esto por el token)
+@token = {{auth.login.response.body.token}} 
+
+### Listar todos los pacientes
+GET {{url}}/pacientes
+Authorization: Bearer {{token}}
+
+### Buscar paciente por ID
+GET {{url}}/pacientes/1
+Authorization: Bearer {{token}}
+
+### Crear paciente
+# @name createPatient
+POST {{url}}/pacientes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "juana",
+  "apellido": "fuenzalida", 
+  "dni": 34567111,
+  "fecha_nacimiento": "1995-07-25",
+  "obra_social": "OSDE"
+}
+
+### Actualizar paciente
+PUT {{url}}/pacientes/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "pepito wolf",
+  "apellido": "sauce",
+  "dni": 34567111,
+  "fecha_nacimiento": "1995-07-25",
+  "obra_social": "Swiss Medical"
+}
+
+### Eliminar paciente
+DELETE {{url}}/pacientes/1
+Authorization: Bearer {{token}}
 GET {{url}}/pacientes
 
 ### Buscar por ID
@@ -11,12 +51,25 @@ POST {{url}}/pacientes
 Content-Type: application/json
 
 {
-  "nombre": "tiago",
+  "nombre": "tiaguito",
   "apellido": "yoppa",
   "dni": "45470185",
   "fecha_nacimiento": "2004-01-14",
-  "obra_social": "OSDE"
+  "obra_social": "APOS"
+}
+
+### Actualizar paciente
+PUT {{url}}/pacientes/1
+Authorization: Bearer TU_TOKEN
+Content-Type: application/json
+
+{
+  "nombre": "Maria josefa",
+  "apellido": "quintero",
+  "dni": 987654321,
+  "fecha_nacimiento": "2010-04-10",
+  "obra_social": "Swiss Medical"
 }
 
 ### Eliminar paciente
-DELETE {{url}}/pacientes/1
+DELETE {{url}}/pacientes/2

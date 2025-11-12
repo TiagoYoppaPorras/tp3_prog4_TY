@@ -1,20 +1,37 @@
-@url=http://localhost:3000
+@url = http://localhost:3000
+
+###Cambiar por el token
+@token = {{auth.login.response.body.token}}
 
 ### Consultar usuarios
 GET {{url}}/usuarios
+Authorization: Bearer {{token}}
 
 ### Consultar por un usuario
-GET {{url}}/usuarios/22
+GET {{url}}/usuarios/30
+Authorization: Bearer {{token}}
 
-### Crear usuario
+### Crear usuario 
+# @name createUser
 POST {{url}}/usuarios
 Content-Type: application/json
 
 {
-    "nombre":"tiagoElMasCrackkk",
-    "email": "tiaguito87@gmail.com",
-    "password": "12345jsE6_"
+    "nombre": "tiago kinesiologo",
+    "email": "tiagoyoppa@clinica.com", 
+    "password": "Password123!"
 }
 
-### Quitar rol a usuario
-DELETE {{url}}/usuarios/20
+### Actualizar usuario
+PUT {{url}}/usuarios/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nombre": "Usuario Actualizado",
+    "email": "actualizado@clinica.com"
+}
+
+### Eliminar usuario
+DELETE {{url}}/usuarios/1
+Authorization: Bearer {{token}}

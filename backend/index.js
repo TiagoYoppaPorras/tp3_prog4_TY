@@ -12,7 +12,7 @@ import authRouter, { authConfig } from "./auth.js";
 conectarDB()
 
 const app = express()
-const port = process.env.PORT
+const port = process.env.PORT || 3000
 
 app.use(express.json())
 
@@ -26,8 +26,8 @@ app.get('/', (req, res) => {
     res.send('Hola mundo')
 })
 
-app.use("/usuarios", usuariosRouter);
 app.use("/pacientes", pacientesRouter);
+app.use("/usuarios", usuariosRouter);
 app.use("/medicos", medicosRouter);
 app.use("/turnos", turnosRouter);
 app.use("/auth", authRouter);

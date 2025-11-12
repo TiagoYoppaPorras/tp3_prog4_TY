@@ -1,21 +1,41 @@
-@url=http://localhost:3000
+@url = http://localhost:3000  
+
+###Cambiar esto por el token
+@token = {{auth.login.response.body.token}}
 
 ### Listar todos los médicos
 GET {{url}}/medicos
+Authorization: Bearer {{token}}
 
 ### Buscar médico por ID
-GET {{url}}/medicos/11
+GET {{url}}/medicos/1
+Authorization: Bearer {{token}}
 
 ### Crear médico
+# @name createDoctor
 POST {{url}}/medicos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "nombre": "tiaguito",
-  "apellido": "yoppa",
-  "especialidad": "Kinesiología",
-  "matricula_profesional": "fue123_"
+  "nombre": "julio",
+  "apellido": "zapata",
+  "especialidad": "Cardiología",
+  "matricula_profesional": "MP12345"
+}
+
+### Actualizar médico
+PUT {{url}}/medicos/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Carlos", 
+  "apellido": "Santander",
+  "especialidad": "Cardiología Infantil",
+  "matricula_profesional": "MP12345"
 }
 
 ### Eliminar médico
-DELETE {{url}}/medicos/10
+DELETE {{url}}/medicos/1
+Authorization: Bearer {{token}}
