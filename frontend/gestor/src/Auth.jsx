@@ -10,26 +10,29 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   const login = async (email, password) => {
-    setError(null);
-    try {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  setError(null);
+  try {
+    const response = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Error al iniciar sesión");
-      }
-
-      setToken(data.token);
-      setUser(data.user);
-    } catch (err) {
-      setError(err.message);
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || "Error al iniciar sesión");
     }
-  };
+
+    setToken(data.token);
+    setUser(data.user);
+    return true;      // ← IMPORTANTE
+  } catch (err) {
+    setError(err.message);
+    return false;     // ← IMPORTANTE
+  }
+};
+
 
   const logout = () => {
     setToken(null);

@@ -1,6 +1,5 @@
 import { Outlet, Link } from "react-router";
 import { useAuth } from "./Auth";
-import { Ingresar } from "./Ingresar";
 
 export const Layout = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -14,14 +13,25 @@ export const Layout = () => {
           <li><Link to="/medicos">Médicos</Link></li>
           <li><Link to="/turnos">Turnos</Link></li>
         </ul>
-        <li>
-          {isAuthenticated ? (
-            <button onClick={() => logout()}>Salir</button>
-          ) : (
-            <Ingresar />
+
+        <ul>
+          {!isAuthenticated && (
+            <>
+              <li><Link to="/login">Ingresar</Link></li>
+              <li><Link to="/registro">Registrarse</Link></li>
+            </>
           )}
-        </li>
+
+          {isAuthenticated && (
+            <li>
+              <button onClick={logout} className="contrast">
+                Cerrar sesión
+              </button>
+            </li>
+          )}
+        </ul>
       </nav>
+
       <Outlet />
     </main>
   );

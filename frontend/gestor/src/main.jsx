@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@picocss/pico";
 import { BrowserRouter, Routes, Route } from "react-router";
+
 import { AuthProvider, AuthPage } from "./Auth.jsx";
 import { Layout } from "./Layout.jsx";
 import { Home } from "./Home.jsx";
@@ -18,6 +19,9 @@ import { Turnos } from "./Turnos/Turnos.jsx";
 import { CrearTurno } from "./Turnos/CrearTurno.jsx";
 import { ModificarTurno } from "./Turnos/ModificarTurno.jsx";
 
+import { Login } from "./Login.jsx";
+import { Registro } from "./registro.jsx";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
@@ -26,6 +30,11 @@ createRoot(document.getElementById("root")).render(
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
 
+            {/* LOGIN + REGISTRO */}
+            <Route path="login" element={<Login />} />
+            <Route path="registro" element={<Registro />} />
+
+            {/* PACIENTES */}
             <Route
               path="pacientes"
               element={
@@ -51,6 +60,7 @@ createRoot(document.getElementById("root")).render(
               }
             />
 
+            {/* MEDICOS */}
             <Route
               path="medicos"
               element={
@@ -76,6 +86,7 @@ createRoot(document.getElementById("root")).render(
               }
             />
 
+            {/* TURNOS */}
             <Route
               path="turnos"
               element={
