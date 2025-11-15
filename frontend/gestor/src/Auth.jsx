@@ -26,10 +26,10 @@ export const AuthProvider = ({ children }) => {
 
     setToken(data.token);
     setUser(data.user);
-    return true;      // ← IMPORTANTE
+    return true;      
   } catch (err) {
     setError(err.message);
-    return false;     // ← IMPORTANTE
+    return false;     
   }
 };
 

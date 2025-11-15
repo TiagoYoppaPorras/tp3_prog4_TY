@@ -30,11 +30,11 @@ createRoot(document.getElementById("root")).render(
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
 
-            {/* LOGIN + REGISTRO */}
+
             <Route path="login" element={<Login />} />
             <Route path="registro" element={<Registro />} />
 
-            {/* PACIENTES */}
+
             <Route
               path="pacientes"
               element={
@@ -60,7 +60,7 @@ createRoot(document.getElementById("root")).render(
               }
             />
 
-            {/* MEDICOS */}
+
             <Route
               path="medicos"
               element={
@@ -86,7 +86,7 @@ createRoot(document.getElementById("root")).render(
               }
             />
 
-            {/* TURNOS */}
+
             <Route
               path="turnos"
               element={

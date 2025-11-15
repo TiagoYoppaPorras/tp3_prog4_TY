@@ -15,7 +15,7 @@ export const Login = () => {
     const ok = await login(usuario, password);
 
     if (ok) {
-      navigate("/"); // ✔ redirige correctamente al Home
+      navigate("/"); 
     }
   };
 

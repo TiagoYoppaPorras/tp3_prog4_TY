@@ -26,12 +26,12 @@ export const Registro = () => {
     });
 
     if (res.ok) {
-      // limpiar inputs
+
       setNombre("");
       setPassword("");
       setEmail("");
 
-      // redirigir al login
+
       navigate("/login");
     } else {
       console.log("Error en el registro:", await res.text());

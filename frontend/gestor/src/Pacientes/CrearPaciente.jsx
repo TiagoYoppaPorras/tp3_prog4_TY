@@ -16,6 +16,48 @@ export const CrearPaciente = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+
+if (!form.nombre?.trim())
+  return window.alert("El nombre es obligatorio");
+
+if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(form.nombre))
+  return window.alert("El nombre solo puede contener letras");
+
+if (form.nombre.trim().length < 1 || form.nombre.trim().length > 50)
+  return window.alert("El nombre debe tener entre 1 y 50 caracteres");
+
+
+if (!form.apellido?.trim())
+  return window.alert("El apellido es obligatorio");
+
+if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(form.apellido))
+  return window.alert("El apellido solo puede contener letras");
+
+if (form.apellido.trim().length < 1 || form.apellido.trim().length > 50)
+  return window.alert("El apellido debe tener entre 1 y 50 caracteres");
+
+if (!form.dni)
+  return window.alert("El DNI es obligatorio");
+
+const dniNum = Number(form.dni);
+
+if (isNaN(dniNum))
+  return window.alert("El DNI debe ser numérico");
+
+if (dniNum < 1000000 || dniNum > 99999999)
+  return window.alert("El DNI debe ser un número entre 1.000.000 y 99.999.999");
+
+
+if (!form.fecha_nacimiento)
+  return window.alert("La fecha de nacimiento es obligatoria");
+
+if (isNaN(Date.parse(form.fecha_nacimiento)))
+  return window.alert("Debe ser una fecha válida");
+
+
+if (form.obra_social && form.obra_social.length > 100)
+  return window.alert("La obra social no puede tener más de 100 caracteres");
     setErrores(null);
 
     const response = await fetchAuth("http://localhost:3000/pacientes", {

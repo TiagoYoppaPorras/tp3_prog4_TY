@@ -107,12 +107,13 @@ router.put(
     const id = Number(req.params.id);
     const { nombre, apellido, especialidad, matricula_profesional } = req.body;
 
-    // Verificar que el médico existe
-    const [medicos] = await db.execute("SELECT id FROM medicos WHERE id=?", [id]);
+    const [medicos] = await db.execute("SELECT id FROM medicos WHERE id=?", [
+      id,
+    ]);
     if (medicos.length === 0) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Médico no encontrado" 
+      return res.status(404).json({
+        success: false,
+        message: "Médico no encontrado",
       });
     }
 
@@ -121,10 +122,10 @@ router.put(
       [nombre, apellido, especialidad, matricula_profesional, id]
     );
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: "Médico actualizado correctamente",
-      data: { id, nombre, apellido, especialidad, matricula_profesional }
+      data: { id, nombre, apellido, especialidad, matricula_profesional },
     });
   }
 );
@@ -137,8 +138,32 @@ router.delete(
   async (req, res) => {
     const id = Number(req.params.id);
 
-    await db.execute("DELETE FROM medicos WHERE id=?", [id]);
-    res.json({ success: true, data: id });
+    const [turnos] = await db.execute(
+      "SELECT COUNT(*) as count FROM turnos WHERE medico_id = ?", 
+      [id]
+    );
+    
+    if (turnos[0].count > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No se puede eliminar el médico porque tiene turnos asignados. Elimine primero los turnos asociados."
+      });
+    }
+
+    const [result] = await db.execute("DELETE FROM medicos WHERE id=?", [id]);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Médico no encontrado"
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: "Médico eliminado correctamente",
+      data: id 
+    });
   }
 );
 

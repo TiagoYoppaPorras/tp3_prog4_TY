@@ -16,6 +16,46 @@ export const CrearMedico = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+
+if (!values.nombre?.trim())
+  return window.alert("El nombre es obligatorio");
+
+if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(values.nombre))
+  return window.alert("El nombre solo puede contener letras");
+
+if (values.nombre.trim().length < 1 || values.nombre.trim().length > 50)
+  return window.alert("El nombre debe tener entre 1 y 50 caracteres");
+
+// APELLIDO
+if (!values.apellido?.trim())
+  return window.alert("El apellido es obligatorio");
+
+if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(values.apellido))
+  return window.alert("El apellido solo puede contener letras");
+
+if (values.apellido.trim().length < 1 || values.apellido.trim().length > 50)
+  return window.alert("El apellido debe tener entre 1 y 50 caracteres");
+
+// ESPECIALIDAD
+if (!values.especialidad?.trim())
+  return window.alert("La especialidad es obligatoria");
+
+if (values.especialidad.trim().length < 1 || values.especialidad.trim().length > 100)
+  return window.alert("La especialidad debe tener entre 1 y 100 caracteres");
+
+// MATRÍCULA PROFESIONAL
+if (!values.matricula_profesional?.trim())
+  return window.alert("La matrícula profesional es obligatoria");
+
+if (!/^[a-zA-Z0-9]+$/.test(values.matricula_profesional))
+  return window.alert("La matrícula solo puede contener letras y números");
+
+if (
+  values.matricula_profesional.trim().length < 1 ||
+  values.matricula_profesional.trim().length > 50
+)
+  return window.alert("La matrícula debe tener entre 1 y 50 caracteres");
     setErrores(null);
 
     const response = await fetchAuth("http://localhost:3000/medicos", {
