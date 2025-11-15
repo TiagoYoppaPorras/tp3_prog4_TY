@@ -11,7 +11,9 @@ router.get("/", verificarAutenticacion, async (req, res) => {
     SELECT 
       t.id,
       p.nombre AS paciente_nombre,
+      p.apellido AS paciente_apellido,
       m.nombre AS medico_nombre,
+      m.apellido AS medico_apellido,
       t.fecha,
       t.hora,
       t.estado,
@@ -39,7 +41,9 @@ router.get(
       SELECT 
         t.id,
         p.nombre AS paciente_nombre,
+        p.apellido AS paciente_apellido,
         m.nombre AS medico_nombre,
+        m.apellido AS medico_apellido,
         t.fecha,
         t.hora,
         t.estado,

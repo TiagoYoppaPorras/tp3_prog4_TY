@@ -32,62 +32,65 @@ export const CrearTurno = () => {
     cargarDatos();
   }, [fetchAuth]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.paciente_id)
-  return window.alert("Seleccione un paciente");
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-const pacienteIdNum = Number(form.paciente_id);
+  // Paciente ID
+  if (!values.paciente_id)
+    return alert("Seleccione un paciente");
 
-if (isNaN(pacienteIdNum) || pacienteIdNum < 1)
-  return window.alert("El ID del paciente debe ser un número entero positivo");
+  const pacienteIdNum = Number(values.paciente_id);
+  if (isNaN(pacienteIdNum) || pacienteIdNum < 1)
+    return alert("El ID del paciente debe ser un número entero positivo");
+
+  // Médico ID
+  if (!values.medico_id)
+    return alert("Seleccione un médico");
+
+  const medicoIdNum = Number(values.medico_id);
+  if (isNaN(medicoIdNum) || medicoIdNum < 1)
+    return alert("El ID del médico debe ser un número entero positivo");
+
+  // Fecha
+  if (!values.fecha)
+    return alert("La fecha es obligatoria");
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(values.fecha))
+    return alert("La fecha debe estar en formato YYYY-MM-DD");
+
+  if (isNaN(Date.parse(values.fecha)))
+    return alert("La fecha no es válida");
+
+  // Hora
+  if (!values.hora)
+    return alert("La hora es obligatoria");
+
+  if (!/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(values.hora))
+    return alert("La hora debe estar en formato HH:MM (24 horas)");
+
+  // Estado
+  if (!["pendiente", "atendido", "cancelado"].includes(values.estado))
+    return alert("El estado debe ser: pendiente, atendido o cancelado");
+
+  // Observaciones
+  if (values.observaciones && values.observaciones.length > 500)
+    return alert("Las observaciones no pueden tener más de 500 caracteres");
 
 
-if (!form.medico_id)
-  return window.alert("Seleccione un médico");
+  const response = await fetchAuth("http://localhost:3000/turnos", {
+    method: "POST",
+    body: JSON.stringify(values),
+  });
 
-const medicoIdNum = Number(form.medico_id);
+  const data = await response.json();
 
-if (isNaN(medicoIdNum) || medicoIdNum < 1)
-  return window.alert("El ID del médico debe ser un número entero positivo");
+  if (!response.ok || !data.success) {
+    console.error(data);
+    return alert("Error al crear turno");
+  }
 
-
-if (!form.fecha)
-  return window.alert("La fecha es obligatoria");
-
-if (!/^\d{4}-\d{2}-\d{2}$/.test(form.fecha))
-  return window.alert("La fecha debe estar en formato YYYY-MM-DD");
-
-
-if (isNaN(Date.parse(form.fecha)))
-  return window.alert("La fecha no es válida");
-
-
-if (!form.hora)
-  return window.alert("La hora es obligatoria");
-
-if (!/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(form.hora))
-  return window.alert("La hora debe estar en formato HH:MM (24 horas)");
-
-
-if (!["pendiente", "atendido", "cancelado"].includes(form.estado))
-  return window.alert("El estado debe ser: pendiente, atendido o cancelado");
-
-if (form.observaciones && form.observaciones.length > 500)
-  return window.alert("Las observaciones no pueden tener más de 500 caracteres");
-    const response = await fetchAuth("http://localhost:3000/turnos", {
-      method: "POST",
-      body: JSON.stringify(values),
-    });
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      console.error(data);
-      return window.alert("Error al crear turno");
-    }
-
-    navigate("/turnos");
-  };
+  navigate("/turnos");
+};
 
   return (
     <article>
