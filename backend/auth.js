@@ -86,7 +86,7 @@ router.post(
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "2h",
+      expiresIn: "4h",
     });
 
     // Devolver jwt y datos del usuario
