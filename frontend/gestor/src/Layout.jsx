@@ -9,12 +9,19 @@ export const Layout = () => {
       <nav>
         <ul>
           <li><Link to="/">Inicio</Link></li>
-          <li><Link to="/pacientes">Pacientes</Link></li>
-          <li><Link to="/medicos">Médicos</Link></li>
-          <li><Link to="/turnos">Turnos</Link></li>
+
+
+          {isAuthenticated && (
+            <>
+              <li><Link to="/pacientes">Pacientes</Link></li>
+              <li><Link to="/medicos">Médicos</Link></li>
+              <li><Link to="/turnos">Turnos</Link></li>
+            </>
+          )}
         </ul>
 
         <ul>
+
           {!isAuthenticated && (
             <>
               <li><Link to="/login">Ingresar</Link></li>
