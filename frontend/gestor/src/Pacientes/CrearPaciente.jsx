@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 export const CrearPaciente = () => {
   const { fetchAuth } = useAuth();
   const navigate = useNavigate();
+
   const [values, setValues] = useState({
     nombre: "",
     apellido: "",
@@ -12,66 +13,72 @@ export const CrearPaciente = () => {
     fecha_nacimiento: "",
     obra_social: "",
   });
+
   const [errores, setErrores] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+if (!values.nombre.trim())
+  return alert("El nombre es obligatorio");
 
-if (!form.nombre?.trim())
-  return window.alert("El nombre es obligatorio");
+if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(values.nombre))
+  return alert("El nombre solo puede contener letras y espacios");
 
-if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(form.nombre))
-  return window.alert("El nombre solo puede contener letras");
+if (values.nombre.length > 50)
+  return alert("El nombre no puede superar los 50 caracteres");
 
-if (form.nombre.trim().length < 1 || form.nombre.trim().length > 50)
-  return window.alert("El nombre debe tener entre 1 y 50 caracteres");
+// Apellido
+if (!values.apellido.trim())
+  return alert("El apellido es obligatorio");
 
+if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(values.apellido))
+  return alert("El apellido solo puede contener letras y espacios");
 
-if (!form.apellido?.trim())
-  return window.alert("El apellido es obligatorio");
+if (values.apellido.length > 50)
+  return alert("El apellido no puede superar los 50 caracteres");
 
-if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(form.apellido))
-  return window.alert("El apellido solo puede contener letras");
+// DNI
+if (!values.dni)
+  return alert("El DNI es obligatorio");
 
-if (form.apellido.trim().length < 1 || form.apellido.trim().length > 50)
-  return window.alert("El apellido debe tener entre 1 y 50 caracteres");
-
-if (!form.dni)
-  return window.alert("El DNI es obligatorio");
-
-const dniNum = Number(form.dni);
+const dniNum = Number(values.dni);
 
 if (isNaN(dniNum))
-  return window.alert("El DNI debe ser numérico");
+  return alert("El DNI debe ser numérico");
 
 if (dniNum < 1000000 || dniNum > 99999999)
-  return window.alert("El DNI debe ser un número entre 1.000.000 y 99.999.999");
+  return alert("El DNI debe estar entre 1.000.000 y 99.999.999");
 
+// Fecha de nacimiento
+if (!values.fecha_nacimiento)
+  return alert("La fecha de nacimiento es obligatoria");
 
-if (!form.fecha_nacimiento)
-  return window.alert("La fecha de nacimiento es obligatoria");
+if (isNaN(Date.parse(values.fecha_nacimiento)))
+  return alert("Debe ingresar una fecha válida");
 
-if (isNaN(Date.parse(form.fecha_nacimiento)))
-  return window.alert("Debe ser una fecha válida");
+// Obra social
+if (!values.obra_social.trim())
+  return alert("La obra social es obligatoria");
 
+if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(values.obra_social))
+  return alert("La obra social solo puede contener letras y espacios");
 
-if (form.obra_social && form.obra_social.length > 100)
-  return window.alert("La obra social no puede tener más de 100 caracteres");
+if (values.obra_social.length > 10)
+  return alert("La obra social no puede superar los 10 caracteres");
+
     setErrores(null);
 
     const response = await fetchAuth("http://localhost:3000/pacientes", {
       method: "POST",
       body: JSON.stringify(values),
     });
+
     const data = await response.json();
 
     if (!response.ok || !data.success) {
-      if (response.status === 400) {
-        setErrores(data.errores);
-        return;
-      }
-      return window.alert("Error al crear paciente");
+      if (response.status === 400) return setErrores(data.errores);
+      return alert("Error al crear paciente");
     }
 
     navigate("/pacientes");
@@ -80,6 +87,7 @@ if (form.obra_social && form.obra_social.length > 100)
   return (
     <article>
       <h2>Nuevo Paciente</h2>
+
       <form onSubmit={handleSubmit}>
         <fieldset>
           <label>
@@ -87,11 +95,10 @@ if (form.obra_social && form.obra_social.length > 100)
             <input
               required
               value={values.nombre}
-              onChange={(e) =>
-                setValues({ ...values, nombre: e.target.value })
-              }
+              onChange={(e) => setValues({ ...values, nombre: e.target.value })}
             />
           </label>
+
           <label>
             Apellido
             <input
@@ -102,6 +109,7 @@ if (form.obra_social && form.obra_social.length > 100)
               }
             />
           </label>
+
           <label>
             DNI
             <input
@@ -111,6 +119,7 @@ if (form.obra_social && form.obra_social.length > 100)
               onChange={(e) => setValues({ ...values, dni: e.target.value })}
             />
           </label>
+
           <label>
             Fecha de Nacimiento
             <input
@@ -118,20 +127,30 @@ if (form.obra_social && form.obra_social.length > 100)
               required
               value={values.fecha_nacimiento}
               onChange={(e) =>
-                setValues({ ...values, fecha_nacimiento: e.target.value })
+                setValues({
+                  ...values,
+                  fecha_nacimiento: e.target.value,
+                })
               }
             />
           </label>
+
           <label>
             Obra Social
             <input
+              required
+              maxLength={10}
               value={values.obra_social}
               onChange={(e) =>
-                setValues({ ...values, obra_social: e.target.value })
+                setValues({
+                  ...values,
+                  obra_social: e.target.value,
+                })
               }
             />
           </label>
         </fieldset>
+
         <input type="submit" value="Guardar Paciente" />
       </form>
     </article>
